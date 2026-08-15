@@ -13,34 +13,16 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "types": ["vite/client"],
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "incremental": true
   },
   "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "worker",
-    "vite.config.ts",
-    "build",
-    "examples/d1",
-    "types/cloudflare-workers.d.ts",
-    "drizzle",
-    "drizzle.config.ts",
     "supabase/functions"
   ]
 }

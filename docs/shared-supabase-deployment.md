@@ -5,8 +5,8 @@ applikationer.
 
 - PostgreSQL-schema: `kompetensportalen`
 - Storage-bucket: `kompetensportalen-course-assets`
-- Auth-cookie: `kompetensportalen-auth`
-- Edge Functions: inga funktioner installeras av denna app
+- Auth: Supabase Auth med klientens persistenta session
+- Edge Functions: `api`, `cron-daily`, `stripe-webhook`
 
 Kör migrationerna från denna app i filnamnsordning. De får inte kopieras om till
 de andra apparnas migrationsmappar. Den lokala tillståndsfilen måste vara
@@ -28,9 +28,9 @@ SUPABASE_STORAGE_BUCKET=kompetensportalen-course-assets
 
 ## Webbserver
 
-Projektet byggs med Vite/Vinext och producerar `dist/`, vilket passar det
-gemensamma deployscriptet. Vinext behåller serverroutes för autentisering,
-checkout, kursåtkomst och admin. Kör den byggda appen som en separat process
-med `npm run start` och en egen port, exempelvis `3013`.
+Projektet byggs med ren Vite och producerar `dist/`, vilket passar det
+gemensamma deployscriptet. Alla serveroperationer för autentisering, checkout,
+kursåtkomst och admin går via Supabase Edge Function `api`. Servera `dist/` som
+en statisk SPA och konfigurera fallback till `index.html`.
 
 Starta inte om andra frontend-processer när Kompetensportalen deployas.

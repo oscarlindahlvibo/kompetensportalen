@@ -13,9 +13,8 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# build output
+/dist/
 
 # misc
 .DS_Store
@@ -30,11 +29,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
+# local tooling
 .vercel
-
-# typescript
-next-env.d.ts
-/dist/
+.vinext
+.openai
 /outputs/
 /work/

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Link, Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
-import "../app/globals.css";
+import "./styles.css";
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL ?? "", import.meta.env.VITE_SUPABASE_ANON_KEY ?? "", { db: { schema: "kompetensportalen" }, auth: { persistSession: true, autoRefreshToken: true } });
 type Course = { id: string; slug: string; name: string; short_description: string; full_description?: string; base_price_sek: number; validity_months?: number; estimated_minutes: number; status: string; tags_json?: string };

@@ -11,20 +11,19 @@
 
 ## Deployment
 
-Applikationen körs som en separat Next.js-server med Supabase som enda databas-,
-Storage- och Auth-plattform. Appen använder PostgreSQL-schemat
+Applikationen är en statisk Vite-klient med Supabase som databas-,
+Storage-, Auth- och Edge Function-plattform. Appen använder PostgreSQL-schemat
 `kompetensportalen` och Storage-bucketen `kompetensportalen-course-assets`, så
 den delar inte tabeller eller filer med andra appar i samma Supabase-instans.
-Sätt `KP_DATABASE_PROVIDER=supabase`,
-`KP_STORAGE_PROVIDER=supabase` och `KP_AUTH_PROVIDER=supabase`.
-Service-role-nyckeln får endast finnas server-side.
+Sätt `VITE_SUPABASE_URL` och `VITE_SUPABASE_ANON_KEY` för bygget.
+Service-role-nyckeln får endast finnas i Edge Function-hemligheter.
 
 Kör appens migrationer före första deploy. De skapar schema och bucket.
-Kursfiler hämtas genom serverroutes som först kontrollerar användarens
+Kursfiler hämtas genom Edge Functions som först kontrollerar användarens
 enrollment.
 
-Bygget använder Vite/Vinext och skapar `dist/`. Kör den byggda appen i en egen
-process på exempelvis port `3013`; starta inte om andra frontend-processer.
+Bygget använder Vite och skapar `dist/`. Servera den statiska katalogen under
+en egen webbrot, till exempel `/var/www/kompetensportalen`.
 
 Produktionsallowlisten för Super Admin ligger i `KP_ADMIN_EMAILS`.
 `PII_ENCRYPTION_KEY` ska vara en lång hemlighet och krävs innan personnummer
@@ -47,8 +46,8 @@ skapar enrollments eller aktiverar företagslicenser. Fakturaköp kräver
 
 Notifieringar läggs först i `notifications`. För riktig leverans sätts
 `MAIL_PROVIDER=resend`, `MAIL_API_KEY` och `MAIL_FROM`. Anropa
-`POST /api/cron/daily` en gång per dygn med `Authorization: Bearer $CRON_SECRET`
-från serverns cron eller hostingplattformens scheduler.
+anropa Edge Function `cron-daily` en gång per dygn med `Authorization: Bearer
+$CRON_SECRET` från serverns cron eller hostingplattformens scheduler.
 
 ## BankID och ID06
 

@@ -9,8 +9,7 @@
     "dev": "vite",
     "build": "vite build",
     "start": "vite preview --host 0.0.0.0",
-    "test": "npm run build && node --import tsx --test tests/lms-flows.test.mjs",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "test": "npm run build && node --test tests/vite-edge.test.mjs",
     "db:generate:supabase": "drizzle-kit generate --config drizzle.supabase.config.ts",
     "db:migrate:supabase": "drizzle-kit migrate --config drizzle.supabase.config.ts",
     "migrate:sqlite:supabase": "node scripts/migrate-sqlite-to-supabase.mjs",
@@ -18,10 +17,8 @@
     "migration:normalize-csv": "node --import tsx scripts/normalize-odoo-csv.mjs"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "drizzle-orm": "^0.45.2",
-    "next": "16.2.6",
     "postgres": "^3.4.9",
     "qrcode": "^1.5.4",
     "react": "19.2.6",
@@ -37,8 +34,6 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "6.0.2",
     "drizzle-kit": "0.31.10",
-    "eslint": "9.39.4",
-    "eslint-config-next": "16.2.6",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
     "vite": "8.0.13"

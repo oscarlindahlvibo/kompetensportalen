@@ -15,13 +15,14 @@ npm run build
 npm test
 ```
 
-Lokal förhandsvisning körs normalt på `http://localhost:3000/`.
+Lokal förhandsvisning körs normalt på Vites port `http://localhost:5173/`.
 
 ## Supabase deployment
 
-The production target is Supabase Postgres, Storage and Auth. Copy
-`.env.example` to `.env.local`, set the three `KP_*_PROVIDER` values to
-`supabase`, and run `npm run db:migrate:supabase` with `SUPABASE_DB_URL`.
+The production target is Supabase Postgres, Storage, Auth and Edge Functions.
+Copy `.env.example` to `.env.local`, set `VITE_SUPABASE_URL` and
+`VITE_SUPABASE_ANON_KEY`, then run the migrations and deploy the three Edge
+Functions documented in `supabase/README.md`.
 Setup, private storage and the first admin account are documented in
 [`supabase/README.md`](supabase/README.md).
 
@@ -32,7 +33,7 @@ Setup, private storage and the first admin account are documented in
 - APV 1.1-1.3 seed-data
 - domänmotor för enrollment, återcertifiering, examination, certifikat, företagslicenser och påminnelser
 - Odoo-importverktyg med migrationsrapport
-- server-side API för autentisering, order, Stripe Checkout/webhook, kursprogress, examination, företagslicenser, certifikatverifiering, ID06, GDPR och utgångspåminnelser
+- Supabase Edge Function API för autentisering, order, Stripe Checkout/webhook, kursprogress, examination, företagslicenser, certifikatverifiering, ID06, GDPR och utgångspåminnelser
 - separat examination engine med kursversionskonfiguration, provsnapshot, tidsgräns, maxförsök, cooldown och deltagarvy
 - adminvyer för dashboard, kurser, frågebank, deltagare, order, ID06 och Odoo-import
 - `.env.example` för Stripe, e-post, BankID, ID06 och säkerhetsinställningar
@@ -56,13 +57,14 @@ och läggs därefter till i `KP_ADMIN_EMAILS`.
 ## Useful Commands
 
 - `npm run dev`: start local development
-- `npm run build`: verifiera Next.js produktionsbygge
-- `npm test`: build appen och kör domäntester för återcertifiering, företag, certifikat, ID06 och order
+- `npm run build`: skapa den statiska Vite-klienten i `dist/`
+- `npm test`: bygg klienten och kontrollera Vite-, Supabase- och schema-layouten
 - `npm run db:generate:supabase`: generera Supabase/Postgres-migrationer
 - `npm run db:migrate:supabase`: kör migrationer mot Supabase
 - `npm run migration:normalize-csv -- ./odoo-csv ./apv-export.json`: normalisera ett CSV-bundle från Odoo till importformatet
 
-## Learn More
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Drizzle PostgreSQL Guide](https://orm.drizzle.team/docs/get-started-postgresql)
+Webbservern ska servera `dist/` och skicka alla SPA-rutter till `index.html`.
+API-anrop, betalningar, adminbehörighet och filuppladdning körs i Supabase
+Edge Functions. Klienten innehåller inga serverroutes, D1- eller R2-beroenden.
