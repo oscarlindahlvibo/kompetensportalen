@@ -12,6 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
+    "types": ["vite/client"],
     "incremental": true,
     "plugins": [
       {
@@ -39,6 +40,7 @@
     "examples/d1",
     "types/cloudflare-workers.d.ts",
     "drizzle",
-    "drizzle.config.ts"
+    "drizzle.config.ts",
+    "supabase/functions"
   ]
 }

@@ -19,7 +19,7 @@ SUPABASE_DB_URL='postgresql://postgres:<password>@db.<project-ref>.supabase.co:5
 
 Migrationerna skapar ett eget PostgreSQL-schema, `kompetensportalen`, och en
 egen privat Storage-bucket, `kompetensportalen-course-assets`. Kör dem i
-ordning. Kursfiler läses endast via appens serverroute,
+ordning. Kursfiler läses endast via Edge Functions,
 som först kontrollerar enrollment och kursåtkomst.
 
 Skapa det första admin-kontot i Supabase Auth. Lägg dess e-post i
@@ -41,6 +41,17 @@ skriver en tabellvis rapport. Kör det aldrig mot en databas som inte först har
 fått Supabase-migrationerna. Kursassets migreras separat till den privata
 `kompetensportalen-course-assets`-bucketen eftersom filer inte ligger i
 relationsdatabasen.
+
+Edge Function-API:t ligger i `supabase/functions/api`. Deploya funktionerna med:
+
+```bash
+supabase functions deploy api --no-verify-jwt
+supabase functions deploy cron-daily --no-verify-jwt
+supabase functions deploy stripe-webhook --no-verify-jwt
+```
+
+Funktionen verifierar Supabase JWT själv och använder service role endast
+server-side. Sätt `APP_ORIGIN` till Kompetensportalens publika origin.
 
 På en Node-server anropas `/api/cron/daily` en gång
 per dygn med `Authorization: Bearer $CRON_SECRET` från serverns cron eller
