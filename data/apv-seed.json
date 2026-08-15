@@ -1,0 +1,191 @@
+{
+  "course": {
+    "name": "Arbete på väg - APV 1.1-1.3",
+    "slug": "arbete-pa-vag-apv-1-1-3",
+    "shortDescription": "Demokurs för att prova Kompetensportalens LMS- och examinationsflöde.",
+    "fullDescription": "Detta är utvecklingsdata och inte den slutliga kommersiella APV-kursen. Den ersätts av verifierad Odoo-export och aktuell dokumentkontroll före publicering.",
+    "category": "Infrastruktur",
+    "tags": ["Online", "ID06", "Development"],
+    "basePriceSek": 2490,
+    "vatRate": 0.25,
+    "validityMonths": 60,
+    "estimatedMinutes": 420,
+    "targetAudience": "Bygg, entreprenad och infrastruktur",
+    "regulatoryFramework": "Aktuella styrande APV-dokument",
+    "competenceCode": "APV-1.1-1.3",
+    "requiresIdentityVerification": true,
+    "id06Enabled": true,
+    "seoTitle": "Arbete på väg APV 1.1-1.3",
+    "seoDescription": "Utvecklingsversion för test av APV-flödet."
+  },
+  "version": {
+    "version": "1.0-demo",
+    "changelog": "Utvecklingsversion med representativ text, quiz och slutprov.",
+    "exam": {
+      "questionCount": 6,
+      "passPercent": 80,
+      "timeLimitSeconds": 3600,
+      "maxAttempts": 3,
+      "cooldownSeconds": 300,
+      "randomizeQuestions": true,
+      "randomizeAnswers": true,
+      "topicRules": [
+        { "topic": "Riskbedömning", "count": 2 },
+        { "topic": "Skyddszoner", "count": 2 },
+        { "topic": "Arbetsmiljö", "count": 1 },
+        { "topic": "Trafikmiljö", "count": 1 }
+      ]
+    }
+  },
+  "chapters": [
+    {
+      "title": "Introduktion och ansvar",
+      "description": "Introduktion till utbildningen och roller i arbetet.",
+      "lessons": [
+        {
+          "title": "Introduktion",
+          "type": "article",
+          "body": { "text": "Välkommen till utvecklingsversionen av APV 1.1-1.3." }
+        },
+        {
+          "title": "Roller, ansvar och dokumentation",
+          "type": "article",
+          "body": { "text": "Gå igenom roller, ansvar och dokumentationskrav." }
+        },
+        {
+          "title": "Quiz - introduktion",
+          "type": "quiz",
+          "quiz": {
+            "title": "Quiz - introduktion",
+            "feedbackMode": "immediate",
+            "passPercent": 80,
+            "questionIndexes": [0, 1]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Risker, skyddszoner och arbetsmiljö",
+      "description": "Riskbedömning, skydd och arbetsmiljö.",
+      "lessons": [
+        {
+          "title": "Riskbedömning före arbete",
+          "type": "article",
+          "body": { "text": "Identifiera risker och planera åtgärder innan arbetet startar." }
+        },
+        {
+          "title": "Skyddszoner och trafikmiljö",
+          "type": "article",
+          "body": { "text": "Planera skyddszoner utifrån arbetsplatsens risker." }
+        },
+        {
+          "title": "Quiz - risker",
+          "type": "quiz",
+          "quiz": {
+            "title": "Quiz - risker",
+            "feedbackMode": "after_submit",
+            "passPercent": 80,
+            "questionIndexes": [2, 3, 4]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Sammanfattning och slutprov",
+      "description": "Repetition och examination.",
+      "lessons": [
+        {
+          "title": "Sammanfattning inför prov",
+          "type": "article",
+          "body": { "text": "Repetera kursens centrala begrepp innan slutprovet." }
+        },
+        { "title": "Slutprov", "type": "exam", "body": {} }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "topic": "Riskbedömning",
+      "chapterIndex": 1,
+      "type": "single",
+      "prompt": "Vad ska göras innan ett arbete på väg påbörjas?",
+      "explanation": "Riskerna ska identifieras och hanteras innan arbetet startar.",
+      "points": 1,
+      "answers": [
+        { "label": "En riskbedömning", "isCorrect": true },
+        { "label": "Enbart en muntlig avstämning", "isCorrect": false }
+      ]
+    },
+    {
+      "topic": "Riskbedömning",
+      "chapterIndex": 1,
+      "type": "single",
+      "prompt": "När ska riskbedömningen uppdateras?",
+      "explanation": "Den ska ses över när förutsättningarna förändras.",
+      "points": 1,
+      "answers": [
+        { "label": "När förutsättningarna ändras", "isCorrect": true },
+        { "label": "Aldrig efter första bedömningen", "isCorrect": false }
+      ]
+    },
+    {
+      "topic": "Skyddszoner",
+      "chapterIndex": 1,
+      "type": "single",
+      "prompt": "Vilket påstående om skyddszoner är korrekt?",
+      "explanation": "Skyddet ska planeras utifrån riskerna på arbetsplatsen.",
+      "points": 1,
+      "answers": [
+        { "label": "De ska planeras utifrån riskerna", "isCorrect": true },
+        { "label": "De behövs aldrig vid låg trafik", "isCorrect": false }
+      ]
+    },
+    {
+      "topic": "Skyddszoner",
+      "chapterIndex": 1,
+      "type": "true_false",
+      "prompt": "Skyddszonen ska vara tydlig för alla som arbetar på platsen.",
+      "explanation": "Tydlighet minskar risken för att någon hamnar i fara.",
+      "points": 1,
+      "answers": [
+        { "label": "Sant", "isCorrect": true },
+        { "label": "Falskt", "isCorrect": false }
+      ]
+    },
+    {
+      "topic": "Arbetsmiljö",
+      "chapterIndex": 1,
+      "type": "single",
+      "prompt": "Vem ansvarar för att följa de instruktioner som gäller på arbetsplatsen?",
+      "explanation": "Alla deltagare ansvarar för att följa givna instruktioner och rapportera risker.",
+      "points": 1,
+      "answers": [
+        { "label": "Varje person som deltar i arbetet", "isCorrect": true },
+        { "label": "Ingen på arbetsplatsen", "isCorrect": false }
+      ]
+    },
+    {
+      "topic": "Trafikmiljö",
+      "chapterIndex": 1,
+      "type": "single",
+      "prompt": "Vad är viktigt när trafik leds förbi ett arbetsområde?",
+      "explanation": "Trafiklösningen ska vara planerad, tydlig och anpassad till riskerna.",
+      "points": 1,
+      "answers": [
+        { "label": "En tydlig och riskanpassad trafiklösning", "isCorrect": true },
+        { "label": "Att tillfälligt ta bort all information", "isCorrect": false }
+      ]
+    }
+  ],
+  "governingDocuments": [
+    {
+      "title": "Aktuella styrande dokument för APV",
+      "documentNumber": "",
+      "version": "",
+      "publishedAt": "",
+      "url": "",
+      "lastCheckedAt": "",
+      "notes": "Demo-placeholder. Måste ersättas med verifierade aktuella dokument före kommersiell publicering. Inga TDOK-nummer hårdkodas."
+    }
+  ]
+}
