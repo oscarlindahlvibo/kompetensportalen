@@ -28,15 +28,9 @@ SUPABASE_STORAGE_BUCKET=kompetensportalen-course-assets
 
 ## Webbserver
 
-Detta är en Next.js-applikation med serverroutes för autentisering, checkout,
-kursåtkomst och admin. Den ska därför köras som en separat Node-process och får
-inte deployas genom att enbart kopiera `dist/` som en statisk webbplats.
+Projektet byggs med Vite/Vinext och producerar `dist/`, vilket passar det
+gemensamma deployscriptet. Vinext behåller serverroutes för autentisering,
+checkout, kursåtkomst och admin. Kör den byggda appen som en separat process
+med `npm run start` och en egen port, exempelvis `3013`.
 
-Efter `npm run build` startas den fristående servern med:
-
-```bash
-HOSTNAME=127.0.0.1 PORT=3013 node .next/standalone/server.js
-```
-
-Använd en egen systemd-tjänst och proxya en egen domän eller sökväg till port
-3013. Starta inte om andra frontend-processer när Kompetensportalen deployas.
+Starta inte om andra frontend-processer när Kompetensportalen deployas.

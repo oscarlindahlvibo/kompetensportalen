@@ -23,9 +23,8 @@ Kör appens migrationer före första deploy. De skapar schema och bucket.
 Kursfiler hämtas genom serverroutes som först kontrollerar användarens
 enrollment.
 
-Bygget skapar en fristående Next.js-server i `.next/standalone`. Kör den i en
-egen process, exempelvis på port `3013`; kopiera inte bara `dist/`, eftersom
-admin, autentisering, checkout och kursåtkomst använder serverroutes.
+Bygget använder Vite/Vinext och skapar `dist/`. Kör den byggda appen i en egen
+process på exempelvis port `3013`; starta inte om andra frontend-processer.
 
 Produktionsallowlisten för Super Admin ligger i `KP_ADMIN_EMAILS`.
 `PII_ENCRYPTION_KEY` ska vara en lång hemlighet och krävs innan personnummer
