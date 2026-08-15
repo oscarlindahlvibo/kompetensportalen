@@ -181,7 +181,96 @@ async function handle(request: Request) {
     const { data, error } = await client.from("id06_registrations").update({ status: nextStatus, handled_by_user_id: dbUser.id, id06_reference: payload.reference ?? null, error_message: payload.errorMessage ?? null, registered_at: nextStatus === "registered" ? new Date().toISOString() : null }).eq("id", registrationId).select().single();
     return error ? json({ error: error.message }, 400) : json({ registration: data });
   }
-  if (path === "/orders" && method === "POST") { return json({ error: "stripe_not_configured", message: "Order creation is handled by the Stripe Edge Function." }, 501); }
+  if (path === "/orders" && method === "POST") {
+    const courseId = String(payload.courseId ?? "");
+    const quantity = Math.max(1, Math.min(10000, Number(payload.quantity ?? 1)));
+    const { data: course } = await client.from("courses").select("*").eq("id", courseId).eq("status", "published").maybeSingle();
+    if (!course) return json({ error: "course_not_available" }, 400);
+    const now = new Date().toISOString();
+    const orderId = crypto.randomUUID();
+    const itemId = crypto.randomUUID();
+    const productId = `product:${course.id}`;
+    const total = Number(course.campaign_price_sek ?? course.base_price_sek) * quantity;
+    await client.from("products").upsert({ id: productId, course_id: course.id, sku: productId, name: course.name, price_sek: Number(course.campaign_price_sek ?? course.base_price_sek), active: true }, { onConflict: "id" });
+    const { error: orderError } = await client.from("orders").insert({ id: orderId, buyer_user_id: dbUser?.id, buyer_type: "private", status: "checkout_pending", subtotal_sek: total, discount_sek: 0, vat_sek: Math.round(total * Number(course.vat_rate ?? 0.25)), total_sek: total + Math.round(total * Number(course.vat_rate ?? 0.25)), created_at: now, updated_at: now });
+    if (orderError) return json({ error: orderError.message }, 400);
+    await client.from("order_items").insert({ id: itemId, order_id: orderId, product_id: productId, course_id: course.id, quantity, unit_price_sek: Number(course.campaign_price_sek ?? course.base_price_sek), discount_sek: 0 });
+    await client.from("payments").insert({ id: crypto.randomUUID(), order_id: orderId, provider: "stripe", status: "pending", amount_sek: total, created_at: now, updated_at: now });
+    const stripeSecret = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeSecret) return json({ orderId, configurationRequired: true }, 201);
+    const form = new URLSearchParams({ mode: "payment", success_url: `${Deno.env.get("APP_ORIGIN") ?? url.origin}/mina-sidor?order=success`, cancel_url: `${Deno.env.get("APP_ORIGIN") ?? url.origin}/utbildningar/${course.slug}`, "line_items[0][price_data][currency]": "sek", "line_items[0][price_data][product_data][name]": course.name, "line_items[0][price_data][unit_amount]": String(Math.round(Number(course.campaign_price_sek ?? course.base_price_sek) * 100)), "line_items[0][quantity]": String(quantity), "metadata[orderId]": orderId });
+    const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", { method: "POST", headers: { Authorization: `Bearer ${stripeSecret}`, "content-type": "application/x-www-form-urlencoded" }, body: form });
+    const session = await stripeResponse.json();
+    if (!stripeResponse.ok) return json({ orderId, error: session.error?.message ?? "stripe_error" }, 502);
+    await client.from("orders").update({ stripe_checkout_session_id: session.id }).eq("id", orderId);
+    return json({ orderId, url: session.url }, 201);
+  }
+  if (path === "/company/licenses/assign" && method === "POST") {
+    const { data: membership } = await client.from("company_members").select("company_id").eq("user_id", dbUser?.id ?? "").eq("role", "admin").maybeSingle();
+    if (!membership) return json({ error: "forbidden" }, 403);
+    const licenseId = String(payload.licenseId ?? "");
+    const email = String(payload.email ?? "").trim().toLowerCase();
+    if (!email) return json({ error: "email_required" }, 400);
+    const { data: license } = await client.from("course_licenses").select("*").eq("id", licenseId).eq("company_id", membership.company_id).eq("status", "available").maybeSingle();
+    if (!license) return json({ error: "license_not_available" }, 400);
+    const { data: participant } = await client.from("users").select("id").eq("email", email).maybeSingle();
+    const { data, error } = await client.from("course_licenses").update({ assigned_email: email, assigned_to_user_id: participant?.id ?? null, assigned_at: new Date().toISOString(), status: "assigned" }).eq("id", licenseId).select().single();
+    return error ? json({ error: error.message }, 400) : json({ license: data });
+  }
+  if (path === "/privacy/export" && method === "GET") {
+    const [{ data: profile }, { data: enrollments }, { data: certificates }, { data: audit }] = await Promise.all([client.from("profiles").select("*").eq("user_id", dbUser?.id ?? "").maybeSingle(), client.from("enrollments").select("*").eq("user_id", dbUser?.id ?? ""), client.from("certificates").select("*").eq("user_id", dbUser?.id ?? ""), client.from("audit_logs").select("target_type,target_id,action,created_at").eq("actor_user_id", dbUser?.id ?? "")]);
+    return json({ profile, enrollments, certificates, audit });
+  }
+  if (path === "/admin/question-bank" && method === "GET") {
+    if (!dbUser || !["super_admin", "course_admin"].includes(dbUser.role)) return json({ error: "forbidden" }, 403);
+    const { data, error } = await client.from("questions").select("*, answer_options(*)").order("created_at", { ascending: false });
+    return error ? json({ error: error.message }, 500) : json({ questions: data ?? [] });
+  }
+  if (path === "/admin/question-bank" && method === "POST") {
+    if (!dbUser || !["super_admin", "course_admin"].includes(dbUser.role)) return json({ error: "forbidden" }, 403);
+    const id = crypto.randomUUID();
+    const { data, error } = await client.from("questions").insert({ id, course_id: payload.courseId, chapter_id: payload.chapterId ?? null, topic: payload.topic ?? "Övrigt", difficulty: payload.difficulty ?? "medium", type: payload.type ?? "single", prompt: payload.prompt, explanation: payload.explanation ?? null, points: Number(payload.points ?? 1), active: payload.active !== false, image_url: payload.imageUrl ?? null }).select().single();
+    if (error) return json({ error: error.message }, 400);
+    for (const [index, option] of (payload.options ?? []).entries()) await client.from("answer_options").insert({ id: crypto.randomUUID(), question_id: id, label: option.label, is_correct: Boolean(option.isCorrect), sort_order: index });
+    return json({ question: data }, 201);
+  }
+  if (path.startsWith("/admin/courses/") && path.endsWith("/versions") && method === "GET") {
+    if (!dbUser || !["super_admin", "course_admin"].includes(dbUser.role)) return json({ error: "forbidden" }, 403);
+    const courseId = path.split("/")[3];
+    const { data, error } = await client.from("course_versions").select("*").eq("course_id", courseId).order("created_at", { ascending: false });
+    return error ? json({ error: error.message }, 500) : json({ versions: data ?? [] });
+  }
+  if (path === "/identity-verifications" && method === "POST") {
+    const enrollmentId = String(payload.enrollmentId ?? "");
+    const { data: enrollment } = await client.from("enrollments").select("id,user_id").eq("id", enrollmentId).eq("user_id", dbUser?.id ?? "").maybeSingle();
+    if (!enrollment) return json({ error: "not_found" }, 404);
+    const { data, error } = await client.from("identity_verifications").upsert({ id: crypto.randomUUID(), user_id: dbUser?.id, enrollment_id: enrollmentId, status: "identity_pending", method: payload.method ?? "manual_bankid_document" }, { onConflict: "enrollment_id" }).select().single();
+    return error ? json({ error: error.message }, 400) : json({ verification: data }, 201);
+  }
+  if (path.startsWith("/admin/identity/") && method === "PATCH") {
+    if (!dbUser || !["super_admin", "certification_admin"].includes(dbUser.role)) return json({ error: "forbidden" }, 403);
+    const verificationId = path.split("/")[3];
+    const status = String(payload.status ?? "identity_pending");
+    if (!["identity_pending", "identity_verified", "rejected"].includes(status)) return json({ error: "invalid_status" }, 400);
+    const { data, error } = await client.from("identity_verifications").update({ status, reference: payload.reference ?? null, notes: payload.notes ?? null, verified_at: status === "identity_verified" ? new Date().toISOString() : null, verified_by_user_id: dbUser.id }).eq("id", verificationId).select().single();
+    return error ? json({ error: error.message }, 400) : json({ verification: data });
+  }
+  if (path === "/admin/audit" && method === "GET") {
+    if (!dbUser || dbUser.role === "participant") return json({ error: "forbidden" }, 403);
+    const { data, error } = await client.from("audit_logs").select("id,target_type,target_id,action,created_at,actor_user_id").order("created_at", { ascending: false }).limit(200);
+    return error ? json({ error: error.message }, 500) : json({ audit: data ?? [] });
+  }
+  if (path === "/course-assets" && method === "POST") {
+    if (!dbUser || !["super_admin", "course_admin"].includes(dbUser.role)) return json({ error: "forbidden" }, 403);
+    const key = String(payload.key ?? "").replace(/^\/+/, "");
+    const encoded = String(payload.base64 ?? "").replace(/^data:[^;]+;base64,/, "");
+    if (!key || !encoded || key.includes("..") || key.includes("\\")) return json({ error: "invalid_asset" }, 400);
+    const bytes = Uint8Array.from(atob(encoded), (char) => char.charCodeAt(0));
+    if (bytes.byteLength > 500 * 1024 * 1024) return json({ error: "asset_too_large" }, 413);
+    const bucket = Deno.env.get("SUPABASE_STORAGE_BUCKET") ?? "kompetensportalen-course-assets";
+    const { error } = await client.storage.from(bucket).upload(key, bytes, { contentType: payload.contentType ?? "application/octet-stream", upsert: true });
+    return error ? json({ error: error.message }, 400) : json({ assetRef: `course-assets://${key}` }, 201);
+  }
   if (path === "/admin/dashboard" && method === "GET") { if (!dbUser || dbUser.role === "participant") return json({ error: "forbidden" }, 403); const [{ count: courses }, { count: participants }, { count: id06_pending }] = await Promise.all([client.from("courses").select("id", { count: "exact", head: true }), client.from("users").select("id", { count: "exact", head: true }), client.from("id06_registrations").select("id", { count: "exact", head: true }).eq("status", "ready_for_id06")]); return json({ courses: courses ?? 0, participants: participants ?? 0, id06_pending: id06_pending ?? 0 }); }
   return json({ error: "not_found", path }, 404);
 }
