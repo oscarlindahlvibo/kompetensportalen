@@ -1,4 +1,4 @@
-CREATE TABLE "answer_options" (
+CREATE TABLE IF NOT EXISTS "answer_options" (
 	"id" text PRIMARY KEY NOT NULL,
 	"question_id" text NOT NULL,
 	"label" text NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE "answer_options" (
 	"sort_order" integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "audit_logs" (
+CREATE TABLE IF NOT EXISTS "audit_logs" (
 	"id" text PRIMARY KEY NOT NULL,
 	"actor_user_id" text,
 	"target_type" text NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE "audit_logs" (
 	"created_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "certificates" (
+CREATE TABLE IF NOT EXISTS "certificates" (
 	"id" text PRIMARY KEY NOT NULL,
 	"enrollment_id" text NOT NULL,
 	"user_id" text NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE "certificates" (
 	CONSTRAINT "certificates_verification_code_unique" UNIQUE("verification_code")
 );
 --> statement-breakpoint
-CREATE TABLE "chapters" (
+CREATE TABLE IF NOT EXISTS "chapters" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_version_id" text NOT NULL,
 	"title" text NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE "chapters" (
 	"sort_order" integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "companies" (
+CREATE TABLE IF NOT EXISTS "companies" (
 	"id" text PRIMARY KEY NOT NULL,
 	"organization_number" text NOT NULL,
 	"name" text NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE "companies" (
 	CONSTRAINT "companies_organization_number_unique" UNIQUE("organization_number")
 );
 --> statement-breakpoint
-CREATE TABLE "company_members" (
+CREATE TABLE IF NOT EXISTS "company_members" (
 	"id" text PRIMARY KEY NOT NULL,
 	"company_id" text NOT NULL,
 	"user_id" text NOT NULL,
@@ -64,7 +64,7 @@ CREATE TABLE "company_members" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "competencies" (
+CREATE TABLE IF NOT EXISTS "competencies" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"course_id" text NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE "competencies" (
 	"status" text DEFAULT 'valid' NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "consents" (
+CREATE TABLE IF NOT EXISTS "consents" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"consent_type" text NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE "consents" (
 	"withdrawn_at" text
 );
 --> statement-breakpoint
-CREATE TABLE "contact_messages" (
+CREATE TABLE IF NOT EXISTS "contact_messages" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"email" text NOT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE "contact_messages" (
 	"created_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "course_interest" (
+CREATE TABLE IF NOT EXISTS "course_interest" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_id" text NOT NULL,
 	"email" text NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE "course_interest" (
 	"created_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "course_licenses" (
+CREATE TABLE IF NOT EXISTS "course_licenses" (
 	"id" text PRIMARY KEY NOT NULL,
 	"company_id" text,
 	"order_item_id" text,
@@ -115,13 +115,13 @@ CREATE TABLE "course_licenses" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "course_version_governing_documents" (
+CREATE TABLE IF NOT EXISTS "course_version_governing_documents" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_version_id" text NOT NULL,
 	"governing_document_id" text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "course_versions" (
+CREATE TABLE IF NOT EXISTS "course_versions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_id" text NOT NULL,
 	"version" text NOT NULL,
@@ -133,7 +133,7 @@ CREATE TABLE "course_versions" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "courses" (
+CREATE TABLE IF NOT EXISTS "courses" (
 	"id" text PRIMARY KEY NOT NULL,
 	"slug" text NOT NULL,
 	"name" text NOT NULL,
@@ -162,7 +162,7 @@ CREATE TABLE "courses" (
 	CONSTRAINT "courses_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
-CREATE TABLE "discount_codes" (
+CREATE TABLE IF NOT EXISTS "discount_codes" (
 	"id" text PRIMARY KEY NOT NULL,
 	"code" text NOT NULL,
 	"type" text NOT NULL,
@@ -178,7 +178,7 @@ CREATE TABLE "discount_codes" (
 	CONSTRAINT "discount_codes_code_unique" UNIQUE("code")
 );
 --> statement-breakpoint
-CREATE TABLE "email_templates" (
+CREATE TABLE IF NOT EXISTS "email_templates" (
 	"id" text PRIMARY KEY NOT NULL,
 	"key" text NOT NULL,
 	"name" text NOT NULL,
@@ -190,7 +190,7 @@ CREATE TABLE "email_templates" (
 	CONSTRAINT "email_templates_key_unique" UNIQUE("key")
 );
 --> statement-breakpoint
-CREATE TABLE "enrollments" (
+CREATE TABLE IF NOT EXISTS "enrollments" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"company_id" text,
@@ -209,7 +209,7 @@ CREATE TABLE "enrollments" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "exam_answers" (
+CREATE TABLE IF NOT EXISTS "exam_answers" (
 	"id" text PRIMARY KEY NOT NULL,
 	"exam_attempt_id" text NOT NULL,
 	"question_id" text NOT NULL,
@@ -218,7 +218,7 @@ CREATE TABLE "exam_answers" (
 	"points_awarded" integer DEFAULT 0 NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "exam_attempts" (
+CREATE TABLE IF NOT EXISTS "exam_attempts" (
 	"id" text PRIMARY KEY NOT NULL,
 	"enrollment_id" text NOT NULL,
 	"course_version_id" text NOT NULL,
@@ -231,7 +231,7 @@ CREATE TABLE "exam_attempts" (
 	"passed" boolean DEFAULT false NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "exam_configs" (
+CREATE TABLE IF NOT EXISTS "exam_configs" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_version_id" text NOT NULL,
 	"question_count" integer DEFAULT 30 NOT NULL,
@@ -246,7 +246,7 @@ CREATE TABLE "exam_configs" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "governing_documents" (
+CREATE TABLE IF NOT EXISTS "governing_documents" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
 	"document_number" text,
@@ -260,7 +260,7 @@ CREATE TABLE "governing_documents" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "id06_registrations" (
+CREATE TABLE IF NOT EXISTS "id06_registrations" (
 	"id" text PRIMARY KEY NOT NULL,
 	"certificate_id" text NOT NULL,
 	"enrollment_id" text NOT NULL,
@@ -276,7 +276,7 @@ CREATE TABLE "id06_registrations" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "identity_verifications" (
+CREATE TABLE IF NOT EXISTS "identity_verifications" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"enrollment_id" text,
@@ -290,7 +290,7 @@ CREATE TABLE "identity_verifications" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "lesson_progress" (
+CREATE TABLE IF NOT EXISTS "lesson_progress" (
 	"id" text PRIMARY KEY NOT NULL,
 	"enrollment_id" text NOT NULL,
 	"lesson_id" text NOT NULL,
@@ -298,7 +298,7 @@ CREATE TABLE "lesson_progress" (
 	"completed_at" text
 );
 --> statement-breakpoint
-CREATE TABLE "lessons" (
+CREATE TABLE IF NOT EXISTS "lessons" (
 	"id" text PRIMARY KEY NOT NULL,
 	"chapter_id" text NOT NULL,
 	"title" text NOT NULL,
@@ -308,7 +308,7 @@ CREATE TABLE "lessons" (
 	"sort_order" integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "notifications" (
+CREATE TABLE IF NOT EXISTS "notifications" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text,
 	"company_id" text,
@@ -321,7 +321,7 @@ CREATE TABLE "notifications" (
 	"sent_at" text
 );
 --> statement-breakpoint
-CREATE TABLE "odoo_imports" (
+CREATE TABLE IF NOT EXISTS "odoo_imports" (
 	"id" text PRIMARY KEY NOT NULL,
 	"source" text NOT NULL,
 	"idempotency_key" text NOT NULL,
@@ -333,7 +333,7 @@ CREATE TABLE "odoo_imports" (
 	CONSTRAINT "odoo_imports_idempotency_key_unique" UNIQUE("idempotency_key")
 );
 --> statement-breakpoint
-CREATE TABLE "order_items" (
+CREATE TABLE IF NOT EXISTS "order_items" (
 	"id" text PRIMARY KEY NOT NULL,
 	"order_id" text NOT NULL,
 	"product_id" text NOT NULL,
@@ -344,7 +344,7 @@ CREATE TABLE "order_items" (
 	"discount_sek" integer DEFAULT 0 NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "orders" (
+CREATE TABLE IF NOT EXISTS "orders" (
 	"id" text PRIMARY KEY NOT NULL,
 	"buyer_user_id" text,
 	"company_id" text,
@@ -362,7 +362,7 @@ CREATE TABLE "orders" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "payments" (
+CREATE TABLE IF NOT EXISTS "payments" (
 	"id" text PRIMARY KEY NOT NULL,
 	"order_id" text NOT NULL,
 	"provider" text NOT NULL,
@@ -375,7 +375,7 @@ CREATE TABLE "payments" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "price_rules" (
+CREATE TABLE IF NOT EXISTS "price_rules" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_id" text,
 	"min_quantity" integer NOT NULL,
@@ -386,7 +386,7 @@ CREATE TABLE "price_rules" (
 	"active" boolean DEFAULT true NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "products" (
+CREATE TABLE IF NOT EXISTS "products" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_id" text NOT NULL,
 	"sku" text NOT NULL,
@@ -396,7 +396,7 @@ CREATE TABLE "products" (
 	CONSTRAINT "products_sku_unique" UNIQUE("sku")
 );
 --> statement-breakpoint
-CREATE TABLE "profiles" (
+CREATE TABLE IF NOT EXISTS "profiles" (
 	"user_id" text PRIMARY KEY NOT NULL,
 	"first_name" text NOT NULL,
 	"last_name" text NOT NULL,
@@ -408,7 +408,7 @@ CREATE TABLE "profiles" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "quality_reviews" (
+CREATE TABLE IF NOT EXISTS "quality_reviews" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_id" text NOT NULL,
 	"education_owner_user_id" text,
@@ -425,7 +425,7 @@ CREATE TABLE "quality_reviews" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "questions" (
+CREATE TABLE IF NOT EXISTS "questions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"course_id" text NOT NULL,
 	"chapter_id" text,
@@ -441,7 +441,7 @@ CREATE TABLE "questions" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "quiz_attempts" (
+CREATE TABLE IF NOT EXISTS "quiz_attempts" (
 	"id" text PRIMARY KEY NOT NULL,
 	"enrollment_id" text NOT NULL,
 	"quiz_id" text NOT NULL,
@@ -456,14 +456,14 @@ CREATE TABLE "quiz_attempts" (
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "quiz_questions" (
+CREATE TABLE IF NOT EXISTS "quiz_questions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"quiz_id" text NOT NULL,
 	"question_id" text NOT NULL,
 	"sort_order" integer NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "quizzes" (
+CREATE TABLE IF NOT EXISTS "quizzes" (
 	"id" text PRIMARY KEY NOT NULL,
 	"lesson_id" text,
 	"title" text NOT NULL,
@@ -471,14 +471,14 @@ CREATE TABLE "quizzes" (
 	"pass_percent" integer
 );
 --> statement-breakpoint
-CREATE TABLE "system_settings" (
+CREATE TABLE IF NOT EXISTS "system_settings" (
 	"key" text PRIMARY KEY NOT NULL,
 	"value" text NOT NULL,
 	"created_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL,
 	"updated_at" text DEFAULT CURRENT_TIMESTAMP::text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" text PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
 	"password_hash" text,
@@ -556,16 +556,16 @@ ALTER TABLE "quiz_attempts" ADD CONSTRAINT "quiz_attempts_course_version_id_cour
 ALTER TABLE "quiz_questions" ADD CONSTRAINT "quiz_questions_quiz_id_quizzes_id_fk" FOREIGN KEY ("quiz_id") REFERENCES "public"."quizzes"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "quiz_questions" ADD CONSTRAINT "quiz_questions_question_id_questions_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "quizzes" ADD CONSTRAINT "quizzes_lesson_id_lessons_id_fk" FOREIGN KEY ("lesson_id") REFERENCES "public"."lessons"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-CREATE UNIQUE INDEX "certificates_enrollment_idx" ON "certificates" USING btree ("enrollment_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "company_members_company_user_idx" ON "company_members" USING btree ("company_id","user_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "competencies_certificate_idx" ON "competencies" USING btree ("certificate_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "course_interest_course_email_idx" ON "course_interest" USING btree ("course_id","email");--> statement-breakpoint
-CREATE UNIQUE INDEX "course_licenses_consumed_enrollment_idx" ON "course_licenses" USING btree ("consumed_enrollment_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "course_versions_course_version_idx" ON "course_versions" USING btree ("course_id","version");--> statement-breakpoint
-CREATE INDEX "enrollments_user_course_idx" ON "enrollments" USING btree ("user_id","course_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "exam_attempts_enrollment_attempt_idx" ON "exam_attempts" USING btree ("enrollment_id","attempt_number");--> statement-breakpoint
-CREATE UNIQUE INDEX "exam_configs_course_version_idx" ON "exam_configs" USING btree ("course_version_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "id06_registrations_certificate_idx" ON "id06_registrations" USING btree ("certificate_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "identity_verifications_enrollment_idx" ON "identity_verifications" USING btree ("enrollment_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "lesson_progress_enrollment_lesson_idx" ON "lesson_progress" USING btree ("enrollment_id","lesson_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "quiz_questions_quiz_question_idx" ON "quiz_questions" USING btree ("quiz_id","question_id");
+CREATE UNIQUE INDEX IF NOT EXISTS "certificates_enrollment_idx" ON "certificates" USING btree ("enrollment_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "company_members_company_user_idx" ON "company_members" USING btree ("company_id","user_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "competencies_certificate_idx" ON "competencies" USING btree ("certificate_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "course_interest_course_email_idx" ON "course_interest" USING btree ("course_id","email");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "course_licenses_consumed_enrollment_idx" ON "course_licenses" USING btree ("consumed_enrollment_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "course_versions_course_version_idx" ON "course_versions" USING btree ("course_id","version");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "enrollments_user_course_idx" ON "enrollments" USING btree ("user_id","course_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "exam_attempts_enrollment_attempt_idx" ON "exam_attempts" USING btree ("enrollment_id","attempt_number");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "exam_configs_course_version_idx" ON "exam_configs" USING btree ("course_version_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "id06_registrations_certificate_idx" ON "id06_registrations" USING btree ("certificate_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "identity_verifications_enrollment_idx" ON "identity_verifications" USING btree ("enrollment_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "lesson_progress_enrollment_lesson_idx" ON "lesson_progress" USING btree ("enrollment_id","lesson_id");--> statement-breakpoint
+CREATE UNIQUE INDEX IF NOT EXISTS "quiz_questions_quiz_question_idx" ON "quiz_questions" USING btree ("quiz_id","question_id");
