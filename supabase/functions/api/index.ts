@@ -102,6 +102,85 @@ async function handle(request: Request) {
     const { data, error } = await client.from("courses").update(update).eq("id", courseId).select().single();
     return error ? json({ error: error.message }, 400) : json({ course: data });
   }
+  if (path.startsWith("/quizzes/") && method === "GET") {
+    const quizId = path.split("/")[2];
+    const { data: quiz, error } = await client.from("quizzes").select("*, quiz_questions(*, questions(*, answer_options(*)))").eq("id", quizId).maybeSingle();
+    if (error) return json({ error: error.message }, 500);
+    if (!quiz) return json({ error: "not_found" }, 404);
+    const safe = { ...quiz, quiz_questions: (quiz.quiz_questions ?? []).map((item: any) => ({ ...item, questions: item.questions ? { ...item.questions, answer_options: (item.questions.answer_options ?? []).map((option: any) => ({ id: option.id, label: option.label })) } : null })) };
+    return json({ quiz: safe });
+  }
+  if (path.startsWith("/quizzes/") && path.endsWith("/submit") && method === "POST") {
+    const quizId = path.split("/")[2];
+    const enrollmentId = String(payload.enrollmentId ?? "");
+    const { data: enrollment } = await client.from("enrollments").select("id,user_id,course_id,course_version_id").eq("id", enrollmentId).eq("user_id", dbUser?.id ?? "").maybeSingle();
+    if (!enrollment) return json({ error: "not_found" }, 404);
+    const { data: quiz } = await client.from("quizzes").select("*, quiz_questions(*, questions(*, answer_options(*)))").eq("id", quizId).maybeSingle();
+    if (!quiz) return json({ error: "not_found" }, 404);
+    const answers = payload.answers ?? {};
+    let correct = 0;
+    const feedback = (quiz.quiz_questions ?? []).map((item: any) => { const expected = (item.questions?.answer_options ?? []).filter((option: any) => option.is_correct).map((option: any) => option.id).sort(); const actual = (Array.isArray(answers[item.question_id]) ? answers[item.question_id] : [answers[item.question_id]]).filter(Boolean).sort(); const passed = JSON.stringify(expected) === JSON.stringify(actual); if (passed) correct += 1; return { questionId: item.question_id, correct: passed }; });
+    const scorePercent = feedback.length ? Math.round((correct / feedback.length) * 100) : 0;
+    const passed = scorePercent >= Number(quiz.pass_percent ?? 80);
+    await client.from("quiz_attempts").insert({ id: crypto.randomUUID(), enrollment_id: enrollmentId, quiz_id: quizId, course_version_id: enrollment.course_version_id, attempt_number: Number(payload.attemptNumber ?? 1), question_snapshot_json: JSON.stringify(quiz.quiz_questions ?? []), answers_json: JSON.stringify(answers), score_percent: scorePercent, passed, submitted_at: new Date().toISOString() });
+    return json({ passed, scorePercent, feedback });
+  }
+  if (path === "/exams/attempts" && method === "POST") {
+    const enrollmentId = String(payload.enrollmentId ?? "");
+    const { data: enrollment } = await client.from("enrollments").select("id,user_id,course_id,course_version_id").eq("id", enrollmentId).eq("user_id", dbUser?.id ?? "").maybeSingle();
+    if (!enrollment) return json({ error: "not_found" }, 404);
+    const { data: config } = await client.from("exam_configs").select("*").eq("course_version_id", enrollment.course_version_id).maybeSingle();
+    const { data: questions } = await client.from("questions").select("*, answer_options(*)").eq("course_id", enrollment.course_id).eq("active", true).limit(config?.question_count ?? 30);
+    const attemptId = crypto.randomUUID();
+    await client.from("exam_attempts").insert({ id: attemptId, enrollment_id: enrollmentId, course_version_id: enrollment.course_version_id, attempt_number: Number(payload.attemptNumber ?? 1), status: "started", started_at: new Date().toISOString(), question_snapshot_json: JSON.stringify(questions ?? []), score_percent: 0, passed: false });
+    const safeQuestions = (questions ?? []).map((question: any) => ({ ...question, answer_options: (question.answer_options ?? []).map((option: any) => ({ id: option.id, label: option.label })) }));
+    return json({ attemptId, questions: safeQuestions, config });
+  }
+  if (path.startsWith("/exams/attempts/") && method === "POST") {
+    const attemptId = path.split("/")[3];
+    const { data: attempt } = await client.from("exam_attempts").select("*").eq("id", attemptId).maybeSingle();
+    if (!attempt || attempt.enrollment_id === null) return json({ error: "not_found" }, 404);
+    const { data: enrollment } = await client.from("enrollments").select("user_id").eq("id", attempt.enrollment_id).eq("user_id", dbUser?.id ?? "").maybeSingle();
+    if (!enrollment) return json({ error: "forbidden" }, 403);
+    const questions = JSON.parse(attempt.question_snapshot_json ?? "[]");
+    const answers = payload.answers ?? {};
+    let correct = 0;
+    for (const question of questions) { const expected = (question.answer_options ?? []).filter((option: any) => option.is_correct).map((option: any) => option.id).sort(); const actual = (Array.isArray(answers[question.id]) ? answers[question.id] : [answers[question.id]]).filter(Boolean).sort(); if (JSON.stringify(expected) === JSON.stringify(actual)) correct += 1; }
+    const scorePercent = questions.length ? Math.round((correct / questions.length) * 100) : 0;
+    const passed = scorePercent >= 80;
+    await client.from("exam_attempts").update({ score_percent: scorePercent, passed, status: passed ? "passed" : "failed", finished_at: new Date().toISOString() }).eq("id", attemptId);
+    return json({ passed, scorePercent });
+  }
+  if (path === "/admin/certificates/issue" && method === "POST") {
+    if (!dbUser || !["super_admin", "certification_admin"].includes(dbUser.role)) return json({ error: "forbidden" }, 403);
+    const enrollmentId = String(payload.enrollmentId ?? "");
+    const { data: enrollment } = await client.from("enrollments").select("*, courses(*), course_versions(*)").eq("id", enrollmentId).maybeSingle();
+    if (!enrollment) return json({ error: "not_found" }, 404);
+    const { data: passed } = await client.from("exam_attempts").select("id").eq("enrollment_id", enrollmentId).eq("passed", true).limit(1);
+    const { data: identity } = await client.from("identity_verifications").select("id").eq("enrollment_id", enrollmentId).eq("status", "identity_verified").limit(1);
+    if (!passed?.length || (enrollment.courses?.requires_identity_verification && !identity?.length)) return json({ error: "certification_requirements_not_met" }, 400);
+    const certificateNumber = `KP-${new Date().getFullYear()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    const verificationCode = crypto.randomUUID().replaceAll("-", "").slice(0, 12).toUpperCase();
+    const issuedAt = new Date().toISOString();
+    const validUntil = enrollment.valid_until;
+    const { data: certificate, error } = await client.from("certificates").insert({ id: crypto.randomUUID(), enrollment_id: enrollmentId, user_id: enrollment.user_id, course_id: enrollment.course_id, course_version_id: enrollment.course_version_id, certificate_number: certificateNumber, verification_code: verificationCode, issued_at: issuedAt, valid_until: validUntil, status: "issued" }).select().single();
+    if (error) return json({ error: error.message }, 400);
+    if (enrollment.courses?.id06_enabled) await client.from("id06_registrations").insert({ id: crypto.randomUUID(), certificate_id: certificate.id, enrollment_id: enrollmentId, competence_code: enrollment.courses.competence_code ?? "", competence_name: enrollment.courses.name, status: "ready_for_id06" });
+    return json({ certificate }, 201);
+  }
+  if (path === "/admin/id06" && method === "GET") {
+    if (!dbUser || !["super_admin", "certification_admin"].includes(dbUser.role)) return json({ error: "forbidden" }, 403);
+    const { data, error } = await client.from("id06_registrations").select("*, certificates(*), enrollments(*, users(email), courses(name))").in("status", ["ready_for_id06", "submitted", "failed"]).order("created_at");
+    return error ? json({ error: error.message }, 500) : json({ registrations: data ?? [] });
+  }
+  if (path.startsWith("/admin/id06/") && method === "PATCH") {
+    if (!dbUser || !["super_admin", "certification_admin"].includes(dbUser.role)) return json({ error: "forbidden" }, 403);
+    const registrationId = path.split("/")[3];
+    const nextStatus = String(payload.status ?? "");
+    if (!["submitted", "registered", "failed"].includes(nextStatus)) return json({ error: "invalid_status" }, 400);
+    const { data, error } = await client.from("id06_registrations").update({ status: nextStatus, handled_by_user_id: dbUser.id, id06_reference: payload.reference ?? null, error_message: payload.errorMessage ?? null, registered_at: nextStatus === "registered" ? new Date().toISOString() : null }).eq("id", registrationId).select().single();
+    return error ? json({ error: error.message }, 400) : json({ registration: data });
+  }
   if (path === "/orders" && method === "POST") { return json({ error: "stripe_not_configured", message: "Order creation is handled by the Stripe Edge Function." }, 501); }
   if (path === "/admin/dashboard" && method === "GET") { if (!dbUser || dbUser.role === "participant") return json({ error: "forbidden" }, 403); const [{ count: courses }, { count: participants }, { count: id06_pending }] = await Promise.all([client.from("courses").select("id", { count: "exact", head: true }), client.from("users").select("id", { count: "exact", head: true }), client.from("id06_registrations").select("id", { count: "exact", head: true }).eq("status", "ready_for_id06")]); return json({ courses: courses ?? 0, participants: participants ?? 0, id06_pending: id06_pending ?? 0 }); }
   return json({ error: "not_found", path }, 404);
