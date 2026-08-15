@@ -45,6 +45,7 @@ Setup, private storage and the first admin account are documented in
 - `docs/odoo-migration.md`
 - `docs/odoo-export-checklist.md`
 - `docs/api-and-flows.md`
+- `docs/shared-supabase-deployment.md`
 
 ## Supabase Auth
 

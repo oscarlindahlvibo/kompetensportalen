@@ -15,6 +15,7 @@ export async function GET(request: Request) {
   if (!supabaseUrl || !supabaseKey) return NextResponse.redirect(new URL(`/login?error=supabase_not_configured`, url.origin));
   const cookieStore = await cookies();
   const client = createServerClient(supabaseUrl, supabaseKey, {
+    cookieOptions: { name: "kompetensportalen-auth" },
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll: (items) => items.forEach(({ name, value, options }) => response.cookies.set(name, value, options)),

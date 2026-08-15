@@ -4,9 +4,9 @@
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.answer_options": {
+    "kompetensportalen.answer_options": {
       "name": "answer_options",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -62,9 +62,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.audit_logs": {
+    "kompetensportalen.audit_logs": {
       "name": "audit_logs",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -150,9 +150,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.certificates": {
+    "kompetensportalen.certificates": {
       "name": "certificates",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -308,9 +308,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.chapters": {
+    "kompetensportalen.chapters": {
       "name": "chapters",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -365,9 +365,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.companies": {
+    "kompetensportalen.companies": {
       "name": "companies",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -444,9 +444,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.company_members": {
+    "kompetensportalen.company_members": {
       "name": "company_members",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -544,9 +544,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.competencies": {
+    "kompetensportalen.competencies": {
       "name": "competencies",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -656,9 +656,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.consents": {
+    "kompetensportalen.consents": {
       "name": "consents",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -719,9 +719,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.contact_messages": {
+    "kompetensportalen.contact_messages": {
       "name": "contact_messages",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -770,9 +770,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.course_interest": {
+    "kompetensportalen.course_interest": {
       "name": "course_interest",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -851,9 +851,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.course_licenses": {
+    "kompetensportalen.course_licenses": {
       "name": "course_licenses",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1021,9 +1021,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.course_version_governing_documents": {
+    "kompetensportalen.course_version_governing_documents": {
       "name": "course_version_governing_documents",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1079,9 +1079,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.course_versions": {
+    "kompetensportalen.course_versions": {
       "name": "course_versions",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1185,9 +1185,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.courses": {
+    "kompetensportalen.courses": {
       "name": "courses",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1363,9 +1363,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.discount_codes": {
+    "kompetensportalen.discount_codes": {
       "name": "discount_codes",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1460,9 +1460,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.email_templates": {
+    "kompetensportalen.email_templates": {
       "name": "email_templates",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1532,9 +1532,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.enrollments": {
+    "kompetensportalen.enrollments": {
       "name": "enrollments",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1747,9 +1747,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.exam_answers": {
+    "kompetensportalen.exam_answers": {
       "name": "exam_answers",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1824,9 +1824,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.exam_attempts": {
+    "kompetensportalen.exam_attempts": {
       "name": "exam_attempts",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -1947,9 +1947,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.exam_configs": {
+    "kompetensportalen.exam_configs": {
       "name": "exam_configs",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2071,9 +2071,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.governing_documents": {
+    "kompetensportalen.governing_documents": {
       "name": "governing_documents",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2166,9 +2166,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.id06_registrations": {
+    "kompetensportalen.id06_registrations": {
       "name": "id06_registrations",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2316,9 +2316,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.identity_verifications": {
+    "kompetensportalen.identity_verifications": {
       "name": "identity_verifications",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2454,9 +2454,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.lesson_progress": {
+    "kompetensportalen.lesson_progress": {
       "name": "lesson_progress",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2547,9 +2547,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.lessons": {
+    "kompetensportalen.lessons": {
       "name": "lessons",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2617,9 +2617,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.notifications": {
+    "kompetensportalen.notifications": {
       "name": "notifications",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2718,9 +2718,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.odoo_imports": {
+    "kompetensportalen.odoo_imports": {
       "name": "odoo_imports",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2790,9 +2790,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.order_items": {
+    "kompetensportalen.order_items": {
       "name": "order_items",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -2905,9 +2905,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.orders": {
+    "kompetensportalen.orders": {
       "name": "orders",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3039,9 +3039,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.payments": {
+    "kompetensportalen.payments": {
       "name": "payments",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3128,9 +3128,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.price_rules": {
+    "kompetensportalen.price_rules": {
       "name": "price_rules",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3204,9 +3204,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.products": {
+    "kompetensportalen.products": {
       "name": "products",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3276,9 +3276,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.profiles": {
+    "kompetensportalen.profiles": {
       "name": "profiles",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "user_id": {
           "name": "user_id",
@@ -3360,9 +3360,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.quality_reviews": {
+    "kompetensportalen.quality_reviews": {
       "name": "quality_reviews",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3504,9 +3504,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.questions": {
+    "kompetensportalen.questions": {
       "name": "questions",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3627,9 +3627,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.quiz_attempts": {
+    "kompetensportalen.quiz_attempts": {
       "name": "quiz_attempts",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3754,9 +3754,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.quiz_questions": {
+    "kompetensportalen.quiz_questions": {
       "name": "quiz_questions",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3840,9 +3840,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.quizzes": {
+    "kompetensportalen.quizzes": {
       "name": "quizzes",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",
@@ -3898,9 +3898,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.system_settings": {
+    "kompetensportalen.system_settings": {
       "name": "system_settings",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "key": {
           "name": "key",
@@ -3937,9 +3937,9 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.users": {
+    "kompetensportalen.users": {
       "name": "users",
-      "schema": "",
+      "schema": "kompetensportalen",
       "columns": {
         "id": {
           "name": "id",

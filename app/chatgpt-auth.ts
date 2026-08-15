@@ -26,6 +26,7 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
     if (!url || !key) return null;
     const cookieStore = await cookies();
     const client = createServerClient(url, key, {
+      cookieOptions: { name: "kompetensportalen-auth" },
       cookies: {
         getAll() { return cookieStore.getAll(); },
         setAll(cookiesToSet) {

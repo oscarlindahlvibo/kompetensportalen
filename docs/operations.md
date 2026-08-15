@@ -11,13 +11,21 @@
 
 ## Deployment
 
-Applikationen körs som en Next.js-server med Supabase som enda databas-,
-Storage- och Auth-plattform. Sätt `KP_DATABASE_PROVIDER=supabase`,
+Applikationen körs som en separat Next.js-server med Supabase som enda databas-,
+Storage- och Auth-plattform. Appen använder PostgreSQL-schemat
+`kompetensportalen` och Storage-bucketen `kompetensportalen-course-assets`, så
+den delar inte tabeller eller filer med andra appar i samma Supabase-instans.
+Sätt `KP_DATABASE_PROVIDER=supabase`,
 `KP_STORAGE_PROVIDER=supabase` och `KP_AUTH_PROVIDER=supabase`.
 Service-role-nyckeln får endast finnas server-side.
 
-Skapa en privat Storage-bucket med namnet `course-assets`. Kursfiler hämtas
-genom serverroutes som först kontrollerar användarens enrollment.
+Kör appens migrationer före första deploy. De skapar schema och bucket.
+Kursfiler hämtas genom serverroutes som först kontrollerar användarens
+enrollment.
+
+Bygget skapar en fristående Next.js-server i `.next/standalone`. Kör den i en
+egen process, exempelvis på port `3013`; kopiera inte bara `dist/`, eftersom
+admin, autentisering, checkout och kursåtkomst använder serverroutes.
 
 Produktionsallowlisten för Super Admin ligger i `KP_ADMIN_EMAILS`.
 `PII_ENCRYPTION_KEY` ska vara en lång hemlighet och krävs innan personnummer

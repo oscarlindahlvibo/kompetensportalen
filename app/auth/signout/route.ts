@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const supabaseKey = envString("SUPABASE_ANON_KEY");
   if (supabaseUrl && supabaseKey) {
     const cookieStore = await cookies();
-    const client = createServerClient(supabaseUrl, supabaseKey, { cookies: { getAll: () => cookieStore.getAll(), setAll: (items) => items.forEach(({ name, value, options }) => response.cookies.set(name, value, options)) } });
+    const client = createServerClient(supabaseUrl, supabaseKey, { cookieOptions: { name: "kompetensportalen-auth" }, cookies: { getAll: () => cookieStore.getAll(), setAll: (items) => items.forEach(({ name, value, options }) => response.cookies.set(name, value, options)) } });
     await client.auth.signOut();
   }
   return response;

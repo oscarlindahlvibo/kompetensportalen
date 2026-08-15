@@ -1,12 +1,14 @@
 import { sql } from "drizzle-orm";
-import { boolean, index, integer, pgTable, real, text, uniqueIndex } from "drizzle-orm/pg-core";
+import { boolean, index, integer, pgSchema, real, text, uniqueIndex } from "drizzle-orm/pg-core";
+
+const kompetensportalen = pgSchema("kompetensportalen");
 
 const timestamps = {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP::text`),
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP::text`),
 };
 
-export const users = pgTable("users", {
+export const users = kompetensportalen.table("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash"),
@@ -18,7 +20,7 @@ export const users = pgTable("users", {
   ...timestamps,
 });
 
-export const profiles = pgTable("profiles", {
+export const profiles = kompetensportalen.table("profiles", {
   userId: text("user_id").primaryKey().references(() => users.id),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
@@ -29,7 +31,7 @@ export const profiles = pgTable("profiles", {
   ...timestamps,
 });
 
-export const companies = pgTable("companies", {
+export const companies = kompetensportalen.table("companies", {
   id: text("id").primaryKey(),
   organizationNumber: text("organization_number").notNull().unique(),
   name: text("name").notNull(),
@@ -40,7 +42,7 @@ export const companies = pgTable("companies", {
   ...timestamps,
 });
 
-export const companyMembers = pgTable("company_members", {
+export const companyMembers = kompetensportalen.table("company_members", {
   id: text("id").primaryKey(),
   companyId: text("company_id").notNull().references(() => companies.id),
   userId: text("user_id").notNull().references(() => users.id),
@@ -50,7 +52,7 @@ export const companyMembers = pgTable("company_members", {
   companyUserIdx: uniqueIndex("company_members_company_user_idx").on(table.companyId, table.userId),
 }));
 
-export const courses = pgTable("courses", {
+export const courses = kompetensportalen.table("courses", {
   id: text("id").primaryKey(),
   slug: text("slug").notNull().unique(),
   name: text("name").notNull(),
@@ -77,7 +79,7 @@ export const courses = pgTable("courses", {
   ...timestamps,
 });
 
-export const courseVersions = pgTable("course_versions", {
+export const courseVersions = kompetensportalen.table("course_versions", {
   id: text("id").primaryKey(),
   courseId: text("course_id").notNull().references(() => courses.id),
   version: text("version").notNull(),
@@ -90,7 +92,7 @@ export const courseVersions = pgTable("course_versions", {
   courseVersionIdx: uniqueIndex("course_versions_course_version_idx").on(table.courseId, table.version),
 }));
 
-export const chapters = pgTable("chapters", {
+export const chapters = kompetensportalen.table("chapters", {
   id: text("id").primaryKey(),
   courseVersionId: text("course_version_id").notNull().references(() => courseVersions.id),
   title: text("title").notNull(),
@@ -98,7 +100,7 @@ export const chapters = pgTable("chapters", {
   sortOrder: integer("sort_order").notNull(),
 });
 
-export const examConfigs = pgTable("exam_configs", {
+export const examConfigs = kompetensportalen.table("exam_configs", {
   id: text("id").primaryKey(),
   courseVersionId: text("course_version_id").notNull().references(() => courseVersions.id),
   questionCount: integer("question_count").notNull().default(30),
@@ -114,7 +116,7 @@ export const examConfigs = pgTable("exam_configs", {
   examConfigVersionIdx: uniqueIndex("exam_configs_course_version_idx").on(table.courseVersionId),
 }));
 
-export const lessons = pgTable("lessons", {
+export const lessons = kompetensportalen.table("lessons", {
   id: text("id").primaryKey(),
   chapterId: text("chapter_id").notNull().references(() => chapters.id),
   title: text("title").notNull(),
@@ -124,7 +126,7 @@ export const lessons = pgTable("lessons", {
   sortOrder: integer("sort_order").notNull(),
 });
 
-export const products = pgTable("products", {
+export const products = kompetensportalen.table("products", {
   id: text("id").primaryKey(),
   courseId: text("course_id").notNull().references(() => courses.id),
   sku: text("sku").notNull().unique(),
@@ -133,7 +135,7 @@ export const products = pgTable("products", {
   active: boolean("active", ).notNull().default(true),
 });
 
-export const orders = pgTable("orders", {
+export const orders = kompetensportalen.table("orders", {
   id: text("id").primaryKey(),
   buyerUserId: text("buyer_user_id").references(() => users.id),
   companyId: text("company_id").references(() => companies.id),
@@ -150,7 +152,7 @@ export const orders = pgTable("orders", {
   ...timestamps,
 });
 
-export const orderItems = pgTable("order_items", {
+export const orderItems = kompetensportalen.table("order_items", {
   id: text("id").primaryKey(),
   orderId: text("order_id").notNull().references(() => orders.id),
   productId: text("product_id").notNull().references(() => products.id),
@@ -161,7 +163,7 @@ export const orderItems = pgTable("order_items", {
   discountSek: integer("discount_sek").notNull().default(0),
 });
 
-export const payments = pgTable("payments", {
+export const payments = kompetensportalen.table("payments", {
   id: text("id").primaryKey(),
   orderId: text("order_id").notNull().references(() => orders.id),
   provider: text("provider", { enum: ["stripe", "invoice"] }).notNull(),
@@ -173,7 +175,7 @@ export const payments = pgTable("payments", {
   ...timestamps,
 });
 
-export const courseLicenses = pgTable("course_licenses", {
+export const courseLicenses = kompetensportalen.table("course_licenses", {
   id: text("id").primaryKey(),
   companyId: text("company_id").references(() => companies.id),
   orderItemId: text("order_item_id").references(() => orderItems.id),
@@ -189,7 +191,7 @@ export const courseLicenses = pgTable("course_licenses", {
   consumedEnrollmentIdx: uniqueIndex("course_licenses_consumed_enrollment_idx").on(table.consumedEnrollmentId),
 }));
 
-export const enrollments = pgTable("enrollments", {
+export const enrollments = kompetensportalen.table("enrollments", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id),
   companyId: text("company_id").references(() => companies.id),
@@ -209,7 +211,7 @@ export const enrollments = pgTable("enrollments", {
   enrollmentUserCourseIdx: index("enrollments_user_course_idx").on(table.userId, table.courseId),
 }));
 
-export const lessonProgress = pgTable("lesson_progress", {
+export const lessonProgress = kompetensportalen.table("lesson_progress", {
   id: text("id").primaryKey(),
   enrollmentId: text("enrollment_id").notNull().references(() => enrollments.id),
   lessonId: text("lesson_id").notNull().references(() => lessons.id),
@@ -219,7 +221,7 @@ export const lessonProgress = pgTable("lesson_progress", {
   lessonEnrollmentIdx: uniqueIndex("lesson_progress_enrollment_lesson_idx").on(table.enrollmentId, table.lessonId),
 }));
 
-export const quizzes = pgTable("quizzes", {
+export const quizzes = kompetensportalen.table("quizzes", {
   id: text("id").primaryKey(),
   lessonId: text("lesson_id").references(() => lessons.id),
   title: text("title").notNull(),
@@ -227,7 +229,7 @@ export const quizzes = pgTable("quizzes", {
   passPercent: integer("pass_percent"),
 });
 
-export const questions = pgTable("questions", {
+export const questions = kompetensportalen.table("questions", {
   id: text("id").primaryKey(),
   courseId: text("course_id").notNull().references(() => courses.id),
   chapterId: text("chapter_id").references(() => chapters.id),
@@ -242,7 +244,7 @@ export const questions = pgTable("questions", {
   ...timestamps,
 });
 
-export const answerOptions = pgTable("answer_options", {
+export const answerOptions = kompetensportalen.table("answer_options", {
   id: text("id").primaryKey(),
   questionId: text("question_id").notNull().references(() => questions.id),
   label: text("label").notNull(),
@@ -250,7 +252,7 @@ export const answerOptions = pgTable("answer_options", {
   sortOrder: integer("sort_order").notNull(),
 });
 
-export const quizQuestions = pgTable("quiz_questions", {
+export const quizQuestions = kompetensportalen.table("quiz_questions", {
   id: text("id").primaryKey(),
   quizId: text("quiz_id").notNull().references(() => quizzes.id),
   questionId: text("question_id").notNull().references(() => questions.id),
@@ -259,7 +261,7 @@ export const quizQuestions = pgTable("quiz_questions", {
   quizQuestionIdx: uniqueIndex("quiz_questions_quiz_question_idx").on(table.quizId, table.questionId),
 }));
 
-export const quizAttempts = pgTable("quiz_attempts", {
+export const quizAttempts = kompetensportalen.table("quiz_attempts", {
   id: text("id").primaryKey(),
   enrollmentId: text("enrollment_id").notNull().references(() => enrollments.id),
   quizId: text("quiz_id").notNull().references(() => quizzes.id),
@@ -273,7 +275,7 @@ export const quizAttempts = pgTable("quiz_attempts", {
   ...timestamps,
 });
 
-export const examAttempts = pgTable("exam_attempts", {
+export const examAttempts = kompetensportalen.table("exam_attempts", {
   id: text("id").primaryKey(),
   enrollmentId: text("enrollment_id").notNull().references(() => enrollments.id),
   courseVersionId: text("course_version_id").notNull().references(() => courseVersions.id),
@@ -288,7 +290,7 @@ export const examAttempts = pgTable("exam_attempts", {
   examAttemptNumberIdx: uniqueIndex("exam_attempts_enrollment_attempt_idx").on(table.enrollmentId, table.attemptNumber),
 }));
 
-export const examAnswers = pgTable("exam_answers", {
+export const examAnswers = kompetensportalen.table("exam_answers", {
   id: text("id").primaryKey(),
   examAttemptId: text("exam_attempt_id").notNull().references(() => examAttempts.id),
   questionId: text("question_id").notNull().references(() => questions.id),
@@ -297,7 +299,7 @@ export const examAnswers = pgTable("exam_answers", {
   pointsAwarded: integer("points_awarded").notNull().default(0),
 });
 
-export const identityVerifications = pgTable("identity_verifications", {
+export const identityVerifications = kompetensportalen.table("identity_verifications", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id),
   enrollmentId: text("enrollment_id").references(() => enrollments.id),
@@ -312,7 +314,7 @@ export const identityVerifications = pgTable("identity_verifications", {
   identityEnrollmentIdx: uniqueIndex("identity_verifications_enrollment_idx").on(table.enrollmentId),
 }));
 
-export const certificates = pgTable("certificates", {
+export const certificates = kompetensportalen.table("certificates", {
   id: text("id").primaryKey(),
   enrollmentId: text("enrollment_id").notNull().references(() => enrollments.id),
   userId: text("user_id").notNull().references(() => users.id),
@@ -327,7 +329,7 @@ export const certificates = pgTable("certificates", {
   certificateEnrollmentIdx: uniqueIndex("certificates_enrollment_idx").on(table.enrollmentId),
 }));
 
-export const competencies = pgTable("competencies", {
+export const competencies = kompetensportalen.table("competencies", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id),
   courseId: text("course_id").notNull().references(() => courses.id),
@@ -339,7 +341,7 @@ export const competencies = pgTable("competencies", {
   competencyCertificateIdx: uniqueIndex("competencies_certificate_idx").on(table.certificateId),
 }));
 
-export const id06Registrations = pgTable("id06_registrations", {
+export const id06Registrations = kompetensportalen.table("id06_registrations", {
   id: text("id").primaryKey(),
   certificateId: text("certificate_id").notNull().references(() => certificates.id),
   enrollmentId: text("enrollment_id").notNull().references(() => enrollments.id),
@@ -356,7 +358,7 @@ export const id06Registrations = pgTable("id06_registrations", {
   id06CertificateIdx: uniqueIndex("id06_registrations_certificate_idx").on(table.certificateId),
 }));
 
-export const discountCodes = pgTable("discount_codes", {
+export const discountCodes = kompetensportalen.table("discount_codes", {
   id: text("id").primaryKey(),
   code: text("code").notNull().unique(),
   type: text("type", { enum: ["percent", "fixed"] }).notNull(),
@@ -371,7 +373,7 @@ export const discountCodes = pgTable("discount_codes", {
   active: boolean("active", ).notNull().default(true),
 });
 
-export const priceRules = pgTable("price_rules", {
+export const priceRules = kompetensportalen.table("price_rules", {
   id: text("id").primaryKey(),
   courseId: text("course_id").references(() => courses.id),
   minQuantity: integer("min_quantity").notNull(),
@@ -382,7 +384,7 @@ export const priceRules = pgTable("price_rules", {
   active: boolean("active", ).notNull().default(true),
 });
 
-export const governingDocuments = pgTable("governing_documents", {
+export const governingDocuments = kompetensportalen.table("governing_documents", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
   documentNumber: text("document_number"),
@@ -395,13 +397,13 @@ export const governingDocuments = pgTable("governing_documents", {
   ...timestamps,
 });
 
-export const courseVersionGoverningDocuments = pgTable("course_version_governing_documents", {
+export const courseVersionGoverningDocuments = kompetensportalen.table("course_version_governing_documents", {
   id: text("id").primaryKey(),
   courseVersionId: text("course_version_id").notNull().references(() => courseVersions.id),
   governingDocumentId: text("governing_document_id").notNull().references(() => governingDocuments.id),
 });
 
-export const qualityReviews = pgTable("quality_reviews", {
+export const qualityReviews = kompetensportalen.table("quality_reviews", {
   id: text("id").primaryKey(),
   courseId: text("course_id").notNull().references(() => courses.id),
   educationOwnerUserId: text("education_owner_user_id").references(() => users.id),
@@ -417,7 +419,7 @@ export const qualityReviews = pgTable("quality_reviews", {
   ...timestamps,
 });
 
-export const notifications = pgTable("notifications", {
+export const notifications = kompetensportalen.table("notifications", {
   id: text("id").primaryKey(),
   userId: text("user_id").references(() => users.id),
   companyId: text("company_id").references(() => companies.id),
@@ -430,7 +432,7 @@ export const notifications = pgTable("notifications", {
   sentAt: text("sent_at"),
 });
 
-export const emailTemplates = pgTable("email_templates", {
+export const emailTemplates = kompetensportalen.table("email_templates", {
   id: text("id").primaryKey(),
   key: text("key").notNull().unique(),
   name: text("name").notNull(),
@@ -440,7 +442,7 @@ export const emailTemplates = pgTable("email_templates", {
   ...timestamps,
 });
 
-export const courseInterest = pgTable("course_interest", {
+export const courseInterest = kompetensportalen.table("course_interest", {
   id: text("id").primaryKey(),
   courseId: text("course_id").notNull().references(() => courses.id),
   email: text("email").notNull(),
@@ -450,7 +452,7 @@ export const courseInterest = pgTable("course_interest", {
   courseEmailIdx: uniqueIndex("course_interest_course_email_idx").on(table.courseId, table.email),
 }));
 
-export const contactMessages = pgTable("contact_messages", {
+export const contactMessages = kompetensportalen.table("contact_messages", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull(),
@@ -459,7 +461,7 @@ export const contactMessages = pgTable("contact_messages", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP::text`),
 });
 
-export const consents = pgTable("consents", {
+export const consents = kompetensportalen.table("consents", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull().references(() => users.id),
   consentType: text("consent_type").notNull(),
@@ -468,7 +470,7 @@ export const consents = pgTable("consents", {
   withdrawnAt: text("withdrawn_at"),
 });
 
-export const odooImports = pgTable("odoo_imports", {
+export const odooImports = kompetensportalen.table("odoo_imports", {
   id: text("id").primaryKey(),
   source: text("source").notNull(),
   idempotencyKey: text("idempotency_key").notNull().unique(),
@@ -478,7 +480,7 @@ export const odooImports = pgTable("odoo_imports", {
   ...timestamps,
 });
 
-export const auditLogs = pgTable("audit_logs", {
+export const auditLogs = kompetensportalen.table("audit_logs", {
   id: text("id").primaryKey(),
   actorUserId: text("actor_user_id").references(() => users.id),
   targetType: text("target_type").notNull(),
@@ -491,7 +493,7 @@ export const auditLogs = pgTable("audit_logs", {
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP::text`),
 });
 
-export const systemSettings = pgTable("system_settings", {
+export const systemSettings = kompetensportalen.table("system_settings", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
   ...timestamps,

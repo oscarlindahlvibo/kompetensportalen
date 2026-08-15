@@ -25,7 +25,7 @@ try {
         const placeholders = columns.map((_, index) => `$${index + 1}`).join(", ");
         const key = columns.includes("id") ? "id" : "key";
         const updates = columns.filter((column) => column !== key).map((column) => `"${column}" = excluded."${column}"`).join(", ");
-        await transaction.unsafe(`insert into public."${table}" (${quotedColumns}) values (${placeholders}) on conflict ("${key}") do update set ${updates}`, values);
+        await transaction.unsafe(`insert into kompetensportalen."${table}" (${quotedColumns}) values (${placeholders}) on conflict ("${key}") do update set ${updates}`, values);
         imported += 1;
       }
       report.push({ table, imported });

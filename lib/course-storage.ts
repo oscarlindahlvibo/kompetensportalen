@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { envString } from "@/lib/runtime-env";
 
-const bucketName = () => envString("SUPABASE_STORAGE_BUCKET") ?? "course-assets";
+const bucketName = () => envString("SUPABASE_STORAGE_BUCKET") ?? "kompetensportalen-course-assets";
 
 export function courseStorageConfigured() {
   return Boolean(envString("SUPABASE_URL") && envString("SUPABASE_SERVICE_ROLE_KEY"));

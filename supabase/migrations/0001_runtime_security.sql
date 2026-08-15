@@ -15,18 +15,18 @@ begin
     'email_templates','course_interest','contact_messages','consents','odoo_imports',
     'audit_logs','system_settings'
   ] loop
-    execute format('alter table public.%I enable row level security', table_name);
+    execute format('alter table kompetensportalen.%I enable row level security', table_name);
   end loop;
 end $$;
 
 insert into storage.buckets (id, name, public)
-values ('course-assets', 'course-assets', false)
+values ('kompetensportalen-course-assets', 'kompetensportalen-course-assets', false)
 on conflict (id) do update set public = excluded.public;
 
 -- Files are served through the authenticated application route, which checks
 -- enrollment ownership before reading from the private bucket.
-create policy "server manages course assets"
+create policy "kompetensportalen server manages course assets"
 on storage.objects for all
 to service_role
-using (bucket_id = 'course-assets')
-with check (bucket_id = 'course-assets');
+using (bucket_id = 'kompetensportalen-course-assets')
+with check (bucket_id = 'kompetensportalen-course-assets');

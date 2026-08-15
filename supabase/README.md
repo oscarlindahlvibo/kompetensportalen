@@ -6,6 +6,8 @@ Kompetensportalen kan köras mot Supabase med följande providerflaggor:
 KP_DATABASE_PROVIDER=supabase
 KP_STORAGE_PROVIDER=supabase
 KP_AUTH_PROVIDER=supabase
+SUPABASE_DB_SCHEMA=kompetensportalen
+SUPABASE_STORAGE_BUCKET=kompetensportalen-course-assets
 ```
 
 Kör migreringen mot projektets Postgres-databas:
@@ -15,9 +17,9 @@ SUPABASE_DB_URL='postgresql://postgres:<password>@db.<project-ref>.supabase.co:5
   npm run db:migrate:supabase
 ```
 
-Kör `supabase/migrations/0001_runtime_security.sql` efter den genererade
-datamodellen om migrationerna inte redan har körts i ordningsföljd. Bucketen
-`course-assets` ska vara privat. Kursfiler läses endast via appens serverroute,
+Migrationerna skapar ett eget PostgreSQL-schema, `kompetensportalen`, och en
+egen privat Storage-bucket, `kompetensportalen-course-assets`. Kör dem i
+ordning. Kursfiler läses endast via appens serverroute,
 som först kontrollerar enrollment och kursåtkomst.
 
 Skapa det första admin-kontot i Supabase Auth. Lägg dess e-post i
@@ -37,7 +39,8 @@ SUPABASE_DB_URL='postgresql://postgres:<password>@db.<project-ref>.supabase.co:5
 Skriptet använder upsert per primärnyckel, konverterar SQLite-booleanvärden och
 skriver en tabellvis rapport. Kör det aldrig mot en databas som inte först har
 fått Supabase-migrationerna. Kursassets migreras separat till den privata
-`course-assets`-bucketen eftersom filer inte ligger i relationsdatabasen.
+`kompetensportalen-course-assets`-bucketen eftersom filer inte ligger i
+relationsdatabasen.
 
 På en Node-server anropas `/api/cron/daily` en gång
 per dygn med `Authorization: Bearer $CRON_SECRET` från serverns cron eller
